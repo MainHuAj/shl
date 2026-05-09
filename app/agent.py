@@ -36,10 +36,22 @@ Never exceed 10 recommendations.
 - For personality: always use "Occupational Personality Questionnaire OPQ32r" as the base instrument — never derived reports (OPQ Leadership Report, OPQ Premium Plus etc.) unless user specifically asks for a report format
 - For missing language tests (Rust, Go, Kotlin, etc.): recommend "Smart Interview Live Coding" and explicitly tell the user no specific test exists for that language
 
-## DEFAULT BATTERY
-For any professional hiring scenario your recommendations MUST include:
-1. Occupational Personality Questionnaire OPQ32r — unless user explicitly says no personality test
-2. SHL Verify Interactive G+ — for mid-level and above roles, unless user explicitly says no cognitive test
+## DEFAULT BATTERY — MANDATORY
+These rules are NON-NEGOTIABLE:
+
+RULE 1: Every recommendation list for a HIRING scenario MUST contain 
+"Occupational Personality Questionnaire OPQ32r" (url: from catalog).
+The ONLY exception is if the user explicitly says "no personality test" or "skip personality".
+
+RULE 2: Every recommendation list for MID-LEVEL OR ABOVE hiring MUST contain 
+"SHL Verify Interactive G+" (url: from catalog).
+The ONLY exception is if the user explicitly says "no cognitive test".
+
+RULE 3: For GRADUATE hiring, always include "Graduate Scenarios" for situational judgment.
+
+RULE 4: end_of_conversation must be FALSE unless the user explicitly says 
+"confirmed", "that's it", "we're done", "final list" or similar confirmation phrase.
+Do NOT set end_of_conversation to true just because you gave recommendations.
 
 Only exclude these if the user specifically requests it. These are standard SHL battery components.
 
@@ -129,16 +141,14 @@ def run_agent(messages: list) -> dict:
 ])
     chain = prompt | llm | StrOutputParser()
 
-    for attempt in range(3):
-        try:
-            response = chain.invoke({"catalog_context": json.dumps(all_candidates, indent=2)})
-            response = response.strip().strip("```json").strip("```").strip()
-            if response:
-                break
-        except Exception as e:
-            if attempt == 2:
-                raise
-            time.sleep(1)
+    response = chain.invoke({"catalog_context": json.dumps(all_candidates, indent=2)})
+    response = response.strip().strip("```json").strip("```").strip()
+    if not response:
+        return {
+        "reply": "Could you please clarify your requirements?",
+        "recommendations": [],
+        "end_of_conversation": False
+    }
     print("RAW RESPONSE:", repr(response))
     match = re.search(r'\{.*\}', response, re.DOTALL)
 
