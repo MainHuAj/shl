@@ -4,6 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
 from app.retriever import retrieve
 import json
+import time
 import re
 load_dotenv()
 
@@ -127,8 +128,17 @@ def run_agent(messages: list) -> dict:
     *[(msg["role"], msg["content"]) for msg in messages]
 ])
     chain = prompt | llm | StrOutputParser()
-    response = chain.invoke({"catalog_context": json.dumps(all_candidates, indent=2)})
-    response = response.strip().strip("```json").strip("```").strip()
+
+    for attempt in range(3):
+        try:
+            response = chain.invoke({"catalog_context": json.dumps(all_candidates, indent=2)})
+            response = response.strip().strip("```json").strip("```").strip()
+            if response:
+                break
+        except Exception as e:
+            if attempt == 2:
+                raise
+            time.sleep(1)
     print("RAW RESPONSE:", repr(response))
     match = re.search(r'\{.*\}', response, re.DOTALL)
 
@@ -152,12 +162,12 @@ def run_agent(messages: list) -> dict:
 
     # Filter out any hallucinated URLs
     filtered_recs = [
-    r for r in parsed.get("recommendations", [])
-    if r.get("url") in valid_urls
-]
+        r for r in parsed.get("recommendations", [])
+        if r.get("url") in valid_urls
+    ]
 
     return {
-    "reply": parsed["reply"],
-    "recommendations": filtered_recs,
-    "end_of_conversation": parsed.get("end_of_conversation", False)
-}
+        "reply": parsed["reply"],
+        "recommendations": filtered_recs,
+        "end_of_conversation": parsed.get("end_of_conversation", False)
+    }
