@@ -1,0 +1,9 @@
+{
+  "messages": [
+    {"role": "user", "content": "Here's the JD for an engineer we need to fill: Senior Full-Stack Engineer — 5+ years across Core Java, Spring, REST API design, Angular, SQL/relational databases, AWS deployment, and Docker. Will own end-to-end microservice delivery, contribute to architectural decisions, and mentor mid-level engineers."},
+    {"role": "assistant", "content": "That JD spans several areas. Is this a backend-leaning role or true full-stack?"},
+    {"role": "user", "content": "Backend-leaning. Core Java and Spring are day-one priorities, SQL is constant."},
+    {"role": "assistant", "content": "Is the seniority closer to a senior IC or tech lead?"},
+    {"role": "user", "content": "Senior IC. They lead design on their own services but don't manage others directly."}
+  ]
+}
