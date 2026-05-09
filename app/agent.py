@@ -98,7 +98,7 @@ JSON array:"""
     except:
         pass
     
-    # fallback — single generic query
+
     return [conversation[-200:]]
 
     
@@ -143,8 +143,17 @@ def run_agent(messages: list) -> dict:
         }
 
     parsed = json.loads(match.group())
+    # Build valid URL set from retrieved candidates
+    valid_urls = {c["url"] for c in all_candidates}
+
+    # Filter out any hallucinated URLs
+    filtered_recs = [
+    r for r in parsed.get("recommendations", [])
+    if r.get("url") in valid_urls
+]
+
     return {
-        "reply": parsed["reply"],
-        "recommendations": parsed.get("recommendations", []),
-        "end_of_conversation": parsed.get("end_of_conversation", False)
-    }
+    "reply": parsed["reply"],
+    "recommendations": filtered_recs,
+    "end_of_conversation": parsed.get("end_of_conversation", False)
+}
