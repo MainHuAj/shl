@@ -1,0 +1,18 @@
+[project]
+name = "shl-recommender"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "chromadb>=1.5.9",
+    "fastapi>=0.136.1",
+    "groq>=0.37.1",
+    "langchain>=1.2.18",
+    "langchain-community>=0.4.1",
+    "langchain-groq>=1.1.2",
+    "langchain-openai>=1.2.1",
+    "python-dotenv>=1.2.2",
+    "requests>=2.33.1",
+    "uvicorn>=0.46.0",
+]
