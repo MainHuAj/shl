@@ -7,7 +7,7 @@ import json
 import re
 load_dotenv()
 
-llm = ChatOpenAI(model="gpt-4o", temperature=0.2)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
 
 SYSTEM_PROMPT = """You are an SHL Assessment Recommender. You help hiring managers and recruiters select the right SHL assessments through conversation.
 
