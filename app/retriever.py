@@ -18,7 +18,7 @@ collection = _client.get_collection(
 
 HF_URL = "https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2/pipeline/feature-extraction"
 def get_query_embedding(query:str) -> list:
-    headers = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"}
+    headers = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY', '').strip()}"}
     for attempt in range(5):
         response = requests.post(HF_URL, headers=headers, json={"inputs": query})
         if response.status_code == 503:
